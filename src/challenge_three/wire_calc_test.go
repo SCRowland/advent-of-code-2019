@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
+	"os"
 	"strings"
 	"testing"
 )
@@ -340,10 +343,16 @@ func TestExampleOne(t *testing.T) {
 	var wireOne = "R75,D30,R83,U83,L12,D49,R71,U7,L72"
 	var wireTwo = "U62,R66,U55,R34,D71,R55,D58,R83"
 	var expectedDistance = 159
+	var expectedSteps = 610
 
 	var got = NearestJunction(wireOne, wireTwo)
 	if got != expectedDistance {
 		t.Errorf("NearestJunction(\"%s\", \"%s\") = %d, not %d", wireOne, wireTwo, got, expectedDistance)
+	}
+
+	got = LeastSteps(wireOne, wireTwo)
+	if got != expectedSteps {
+		t.Errorf("LeastSteps(\"%s\", \"%s\") = %d, not %d", wireOne, wireTwo, got, expectedSteps)
 	}
 }
 
@@ -351,9 +360,37 @@ func TestExampleTwo(t *testing.T) {
 	var wireOne = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51"
 	var wireTwo = "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"
 	var expectedDistance = 135
+	var expectedSteps = 410
 
 	var got = NearestJunction(wireOne, wireTwo)
 	if got != expectedDistance {
 		t.Errorf("NearestJunction(\"%s\", \"%s\") = %d, not %d", wireOne, wireTwo, got, expectedDistance)
 	}
+
+	got = LeastSteps(wireOne, wireTwo)
+	if got != expectedSteps {
+		t.Errorf("LeastSteps(\"%s\", \"%s\") = %d, not %d", wireOne, wireTwo, got, expectedSteps)
+	}
+}
+
+func BenchmarkChallengeInput(b *testing.B) {
+	f, err := os.Open("./input.data")
+	if err != nil {
+		b.Errorf("Can't open input file %s", err.Error())
+	}
+	defer f.Close()
+
+	instructions := []string{}
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		instructions = append(instructions, scanner.Text())
+	}
+
+	wireOneInstructions := instructions[0]
+	wireTwoInstructions := instructions[1]
+
+	distance := NearestJunction(wireOneInstructions, wireTwoInstructions)
+	leastSteps := LeastSteps(wireOneInstructions, wireTwoInstructions)
+	fmt.Printf("Distance %d\n", distance)
+	fmt.Printf("Least steps %d\n", leastSteps)
 }

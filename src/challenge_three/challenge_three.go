@@ -26,5 +26,7 @@ func main() {
 	wireTwo := instructions[1]
 
 	distance := NearestJunction(wireOne, wireTwo)
+	leastSteps := LeastSteps(wireOne, wireTwo)
 	fmt.Printf("Distance %d\n", distance)
+	fmt.Printf("Least steps %d\n", leastSteps)
 }

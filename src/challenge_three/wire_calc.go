@@ -81,22 +81,52 @@ func (w *Wire) Points() ([]Point, error) {
 	return points, nil
 }
 
+// DistanceToPoint returns the distance the wire travels to a given point
+func (w *Wire) DistanceToPoint(target Point) int {
+	points, err := w.Points()
+	if err != nil {
+		// TODO error handling
+	}
+	for idx, p := range points {
+		if target.x == p.x && target.y == p.y {
+			return idx
+		}
+	}
+
+	return 0
+}
+
 // NonOriginIntersections returns list of points where the wires cross
-func NonOriginIntersections(l Wire, r Wire) []Point {
+func NonOriginIntersections(wireOne, wireTwo Wire) []Point {
 	points := []Point{}
 
-	lPoints, _ := l.Points()
-	rPoints, _ := r.Points()
+	wireOnePoints, _ := wireOne.Points()
+	wireTwoPoints, _ := wireTwo.Points()
 
-	for _, l := range lPoints {
-		for _, r := range rPoints {
-			if l.x == 0 && l.y == 0 {
-				// intersecting at the origin doesn't count!
-				continue
-			}
-			if l.x == r.x && l.y == r.y {
-				points = append(points, Point{l.x, l.y})
-			}
+	shortestList := []Point{}
+	longestList := []Point{}
+
+	if len(wireOnePoints) < len(wireTwoPoints) {
+		shortestList = wireOnePoints
+		longestList = wireTwoPoints
+	} else {
+		shortestList = wireTwoPoints
+		longestList = wireOnePoints
+	}
+
+	shortestListPointsMap := make(map[Point]bool)
+	for _, p1 := range shortestList {
+		if p1.x == 0 && p1.y == 0 {
+			// ignore origin
+			continue
+		}
+		shortestListPointsMap[p1] = true
+	}
+
+	for _, p2 := range longestList {
+		_, exists := shortestListPointsMap[p2]
+		if exists {
+			points = append(points, p2)
 		}
 	}
 
@@ -139,9 +169,9 @@ func NearestPoint(points []Point) (Point, error) {
 }
 
 // NearestJunction calculates the distance to the nearest junction to the origin
-func NearestJunction(l string, r string) int {
-	wireOne := NewWire(l)
-	wireTwo := NewWire(r)
+func NearestJunction(wireOneInstructions, wireTwoInstructions string) int {
+	wireOne := NewWire(wireOneInstructions)
+	wireTwo := NewWire(wireTwoInstructions)
 
 	intersections := NonOriginIntersections(wireOne, wireTwo)
 	nearestJunction, err := NearestPoint(intersections)
@@ -150,4 +180,30 @@ func NearestJunction(l string, r string) int {
 	}
 
 	return GetManhattenDistance(nearestJunction)
+}
+
+// StepsToJunction counts the steps to a junction
+func StepsToJunction(wireOne, wireTwo Wire, junction Point) int {
+	// TODO error checking!
+	return wireOne.DistanceToPoint(junction) + wireTwo.DistanceToPoint(junction)
+}
+
+// LeastSteps returns the least number of steps to reach a junction
+func LeastSteps(wireOneInstructions, wireTwoInstructions string) int {
+	wireOne := NewWire(wireOneInstructions)
+	wireTwo := NewWire(wireTwoInstructions)
+
+	intersections := NonOriginIntersections(wireOne, wireTwo)
+
+	// TODO are there more than one intersection?
+
+	leastSteps := StepsToJunction(wireOne, wireTwo, intersections[0])
+	for _, intersection := range intersections[1:] {
+		steps := StepsToJunction(wireOne, wireTwo, intersection)
+		if steps < leastSteps {
+			leastSteps = steps
+		}
+	}
+
+	return leastSteps
 }
