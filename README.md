@@ -16,7 +16,7 @@ go test challenge_<number>
 
 this will run fill tests for each module.
 
-## Running Challenge Code
+## Running Challenge Code
 
 There are scripts in the root directory to run each challenge.
 
