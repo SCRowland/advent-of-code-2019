@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func TestNumberPotentialPasswords(t *testing.T) {
+func TestChallengeInput(t *testing.T) {
 	start := 356261
 	end := 846303
 	expected := 334
