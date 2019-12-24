@@ -11,7 +11,7 @@ func main() {
 	var runningFuelTotal = 0
 	scanner := bufio.NewScanner(os.Stdin)
 
-	fmt.Printf("Calculating fuel required")
+	fmt.Printf("Calculating fuel required\n")
 
 	for scanner.Scan() {
 		line := scanner.Text()
