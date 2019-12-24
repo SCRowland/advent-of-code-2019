@@ -6,6 +6,14 @@ Thought I would try doing it in Go to learn some of that too.
 
 ## Running Tests
 
+In the project root:
+```bash
+unset GOROOT
+export GOPATH=$(pwd)
+
+go test challenge_<number>
+```
+
 ## Running Challenge Code
 
 There are scripts in the root directory to run each challenge.
