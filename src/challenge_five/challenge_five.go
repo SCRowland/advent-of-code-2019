@@ -32,7 +32,7 @@ func main() {
 		}
 		convertedIntInstructions = append(convertedIntInstructions, instructionCode)
 	}
-	program, err := NewIntCodeProgram(convertedIntInstructions)
+	program := NewIntCodeProgram(convertedIntInstructions)
 	err = program.Execute()
 	if err != nil {
 		fmt.Printf("There was an error: %v", err)

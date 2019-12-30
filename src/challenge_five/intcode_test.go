@@ -4,10 +4,7 @@ import "testing"
 
 func TestIterateInstructions(t *testing.T) {
 	instructions := []int{1, 2, 3, 4}
-	got, err := NewIntCodeProgram(instructions)
-	if err != nil {
-		t.Errorf("NewIntCodeProgram(%v) error: %s", instructions, err)
-	}
+	got := NewIntCodeProgram(instructions)
 
 	if got.programCounter != 0 {
 		t.Errorf("NewIntCodeProgram(%v).programCounter = %d, should be 0", instructions, got)
@@ -30,11 +27,7 @@ func TestExectuteNext(t *testing.T) {
 		99,
 	}
 
-	got, err := NewIntCodeProgram(instructions)
-	if err != nil {
-		t.Errorf("NewIntCodeProgram(%v) error: %s", instructions, err)
-	}
-
+	got := NewIntCodeProgram(instructions)
 	got.Execute()
 
 	if got.programCounter != 12 {
@@ -69,11 +62,7 @@ var haltPrograms = []struct {
 
 func TestExecuteHalt(t *testing.T) {
 	for _, tt := range haltPrograms {
-		got, err := NewIntCodeProgram(tt.programText)
-		if err != nil {
-			t.Errorf("NewIntCodeProgram(%v) error: %s", tt.programText, err)
-		}
-
+		got := NewIntCodeProgram(tt.programText)
 		got.Execute()
 
 		if got.programCounter != tt.expectedProgramCounter {
@@ -98,9 +87,8 @@ var badOpcodePrograms = []struct {
 
 func TestBadOpcode(t *testing.T) {
 	for _, tt := range badOpcodePrograms {
-		got, err := NewIntCodeProgram(tt.programText)
-
-		err = got.Execute()
+		got := NewIntCodeProgram(tt.programText)
+		err := got.Execute()
 		if err == nil {
 			t.Errorf("NewIntCodeProgram(%v) opCode error not thrown", tt.programText)
 		}
@@ -125,9 +113,8 @@ var addOpcodePrograms = []struct {
 
 func TestAdditionOpcode(t *testing.T) {
 	for _, tt := range addOpcodePrograms {
-		got, err := NewIntCodeProgram(tt.programText)
-
-		err = got.Execute()
+		got := NewIntCodeProgram(tt.programText)
+		err := got.Execute()
 		if err != nil {
 			t.Errorf("NewIntCodeProgram(%v) error: %s", tt.programText, err)
 		}
@@ -156,9 +143,8 @@ var multiplyOpcodePrograms = []struct {
 
 func TestMultiplyOpcode(t *testing.T) {
 	for _, tt := range multiplyOpcodePrograms {
-		got, err := NewIntCodeProgram(tt.programText)
-
-		err = got.Execute()
+		got := NewIntCodeProgram(tt.programText)
+		err := got.Execute()
 		if err != nil {
 			t.Errorf("NewIntCodeProgram(%v) error: %s", tt.programText, err)
 		}
@@ -198,9 +184,8 @@ var complexPrograms = []struct {
 
 func TestComplexProgram(t *testing.T) {
 	for _, tt := range complexPrograms {
-		got, err := NewIntCodeProgram(tt.programText)
-
-		err = got.Execute()
+		got := NewIntCodeProgram(tt.programText)
+		err := got.Execute()
 		if err != nil {
 			t.Errorf("NewIntCodeProgram(%v) error: %s", tt.programText, err)
 		}
@@ -357,10 +342,7 @@ var fetchValues = []struct {
 
 func TestFetchValue(t *testing.T) {
 	for _, testData := range fetchValues {
-		program, err := NewIntCodeProgram(testData.instructionText)
-		if err != nil {
-			t.Errorf("NewIntCodeProgram(%v) error %v", testData.instructionText, err)
-		}
+		program := NewIntCodeProgram(testData.instructionText)
 		got, err := program.fetchValue(testData.paramValue, testData.paramMode)
 		if err != nil {
 
@@ -379,10 +361,7 @@ func TestFetchValue(t *testing.T) {
 
 func TestGetResult(t *testing.T) {
 	var programIntructions = []int{1, 2, 3, 4}
-	program, err := NewIntCodeProgram(programIntructions)
-	if err != nil {
-		t.Errorf("NewIntCodeProgram(%v) error %v", programIntructions, err)
-	}
+	program := NewIntCodeProgram(programIntructions)
 	got := program.GetResult()
 	if got != 1 {
 		t.Errorf("NewIntCodeProgram(%v).GetResult = %d, not 1", programIntructions, got)
@@ -391,10 +370,7 @@ func TestGetResult(t *testing.T) {
 
 func TestSetInitialError(t *testing.T) {
 	var programIntructions = []int{1, 2, 3, 4}
-	program, err := NewIntCodeProgram(programIntructions)
-	if err != nil {
-		t.Errorf("NewIntCodeProgram(%v) error %v", programIntructions, err)
-	}
+	program := NewIntCodeProgram(programIntructions)
 	program.SetInitialError(123, 456)
 	if program.rawInstructions[1] != 123 {
 		t.Errorf("program.rawInstructions[1] = %d not 123", program.rawInstructions[1])
