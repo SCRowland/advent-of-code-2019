@@ -170,10 +170,12 @@ func TestMultiplyOpcode(t *testing.T) {
 }
 
 func TestInputOperation(t *testing.T) {
-
+	// TODO!
+	// how to mock input? - encapsulate inout to a func and mock that I guess?
 }
 func TestOutputOperation(t *testing.T) {
-
+	// TODO
+	// how to capture output for testing?
 }
 
 var complexPrograms = []struct {
@@ -372,5 +374,33 @@ func TestFetchValue(t *testing.T) {
 				testData.expectedValue,
 			)
 		}
+	}
+}
+
+func TestGetResult(t *testing.T) {
+	var programIntructions = []int{1, 2, 3, 4}
+	program, err := NewIntCodeProgram(programIntructions)
+	if err != nil {
+		t.Errorf("NewIntCodeProgram(%v) error %v", programIntructions, err)
+	}
+	got := program.GetResult()
+	if got != 1 {
+		t.Errorf("NewIntCodeProgram(%v).GetResult = %d, not 1", programIntructions, got)
+	}
+}
+
+func TestSetInitialError(t *testing.T) {
+	var programIntructions = []int{1, 2, 3, 4}
+	program, err := NewIntCodeProgram(programIntructions)
+	if err != nil {
+		t.Errorf("NewIntCodeProgram(%v) error %v", programIntructions, err)
+	}
+	program.SetInitialError(123, 456)
+	if program.rawInstructions[1] != 123 {
+		t.Errorf("program.rawInstructions[1] = %d not 123", program.rawInstructions[1])
+	}
+	program.SetInitialError(123, 456)
+	if program.rawInstructions[2] != 456 {
+		t.Errorf("program.rawInstructions[2] = %d not 456", program.rawInstructions[1])
 	}
 }

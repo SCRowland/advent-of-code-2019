@@ -37,4 +37,5 @@ func main() {
 	if err != nil {
 		fmt.Printf("There was an error: %v", err)
 	}
+	fmt.Printf("Program complete %d\n", program.GetResult())
 }

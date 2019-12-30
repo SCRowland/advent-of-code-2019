@@ -1,32 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strconv"
-	"strings"
 )
-
-const (
-	add      = 1
-	multiply = 2
-	input    = 3
-	output   = 4
-	halt     = 99
-)
-
-const (
-	positional = 0
-	immediate  = 1
-)
-
-type instructionRow struct {
-	opcode        *int
-	positionOne   *int
-	positionTwo   *int
-	positionThree *int
-}
 
 // IntCodeProgram represents the execution of an Int Code Program
 type IntCodeProgram struct {
@@ -34,7 +10,7 @@ type IntCodeProgram struct {
 	rawInstructions []int
 }
 
-// NewIntCodeProgram is the preferred way to instantiate a New Int Code program
+// NewIntCodeProgram is the only way to instantiate a New Int Code program
 func NewIntCodeProgram(instructions []int) (IntCodeProgram, error) {
 	program := IntCodeProgram{
 		0, instructions,
@@ -67,21 +43,18 @@ func (icp *IntCodeProgram) fetchValue(location, mode int) (int, error) {
 		return icp.rawInstructions[location], nil
 	case immediate:
 		return location, nil
+	default:
+		return 0, fmt.Errorf("Unrecognised parameter mode %d", mode)
 	}
-	return 0, nil
 }
 
 // Execute executes the program
 func (icp *IntCodeProgram) Execute() error {
-	var opCodeInstructionCount = 0
-	for ; icp.programCounter <= len(icp.rawInstructions); icp.programCounter += opCodeInstructionCount {
-		var instruction = icp.rawInstructions[icp.programCounter]
-
-		opcode, paramMode1, paramMode2, _ := parseInstruction(instruction)
+	for opCodeInstructionCount := 0; icp.programCounter <= len(icp.rawInstructions); icp.programCounter += opCodeInstructionCount {
+		opcode, paramMode1, paramMode2, _ := parseInstruction(icp.rawInstructions[icp.programCounter])
 
 		switch opcode {
 		case halt:
-			opCodeInstructionCount = 1
 			return nil
 
 		case add:
@@ -105,13 +78,9 @@ func (icp *IntCodeProgram) Execute() error {
 		case input:
 			opCodeInstructionCount = 2
 			var positionOne = icp.rawInstructions[icp.programCounter+1]
-			reader := bufio.NewReader(os.Stdin)
 			fmt.Print("Enter integer: ")
-			text, err := reader.ReadString('\n')
-			if err != nil {
-				return fmt.Errorf("Bad input: %v", err)
-			}
-			inputNumber, err := strconv.Atoi(strings.Trim(text, "\n"))
+			var inputNumber int
+			_, err := fmt.Scanf("%d", &inputNumber)
 			if err != nil {
 				return fmt.Errorf("Bad input: %v", err)
 			}
@@ -135,6 +104,7 @@ func (icp *IntCodeProgram) GetResult() int {
 	return icp.rawInstructions[0]
 }
 
+// SetInitialError allows an initial error code to be set
 func (icp *IntCodeProgram) SetInitialError(noun int, verb int) {
 	icp.rawInstructions[1] = noun
 	icp.rawInstructions[2] = verb
