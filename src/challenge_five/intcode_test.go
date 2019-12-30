@@ -169,6 +169,13 @@ func TestMultiplyOpcode(t *testing.T) {
 	}
 }
 
+func TestInputOperation(t *testing.T) {
+
+}
+func TestOutputOperation(t *testing.T) {
+
+}
+
 var complexPrograms = []struct {
 	programText        []int
 	expectedFinalState []int
@@ -243,19 +250,127 @@ var inputProgram = []int{
 	0,
 }
 
-func TestChallengeInput(t *testing.T) {
-	expectedResult := 5866663
+var instructions = []struct {
+	instruction        int
+	expectedOpcode     int
+	expectedModeParam1 int
+	expectedModeParam2 int
+	expectedModeParam3 int
+}{
+	{
+		1002,
+		2,
+		0,
+		1,
+		0,
+	},
+	{
+		11102,
+		2,
+		1,
+		1,
+		1,
+	},
+	{
+		10105,
+		5,
+		1,
+		0,
+		1,
+	},
+	{
+		2,
+		2,
+		0,
+		0,
+		0,
+	},
+}
 
-	got, err := NewIntCodeProgram(inputProgram)
-
-	got.SetInitialError(12, 2)
-	err = got.Execute()
-	if err != nil {
-		t.Errorf("NewIntCodeProgram(challengeProgram) error: %s", err)
+func TestInstructionParsing(t *testing.T) {
+	for _, testData := range instructions {
+		opcode, paramMode1, paramMode2, paramMode3 := parseInstruction(testData.instruction)
+		if opcode != testData.expectedOpcode {
+			t.Errorf("parseInstruction(%d) = %d, _, _, _, should be %d, _, _, _",
+				testData.instruction,
+				opcode,
+				testData.expectedOpcode,
+			)
+		}
+		if paramMode1 != testData.expectedModeParam1 {
+			t.Errorf("parseInstruction(%d) = _, %d, _, _, should be _, %d, _, _",
+				testData.instruction,
+				paramMode1,
+				testData.expectedModeParam1,
+			)
+		}
+		if paramMode2 != testData.expectedModeParam2 {
+			t.Errorf("parseInstruction(%d) = _, _, %d, _, should be _, _, %d, _",
+				testData.instruction,
+				paramMode2,
+				testData.expectedModeParam2,
+			)
+		}
+		if paramMode3 != testData.expectedModeParam3 {
+			t.Errorf("parseInstruction(%d) = _, _, _, %d should be _, _, _, %d",
+				testData.instruction,
+				paramMode3,
+				testData.expectedModeParam3,
+			)
+		}
 	}
+}
 
-	result := got.GetResult()
-	if result != expectedResult {
-		t.Errorf("NewIntCodeProgram(challengeProgram) = %d", result)
+var fetchValues = []struct {
+	instructionText []int
+	paramValue      int
+	paramMode       int
+	expectedValue   int
+}{
+	{
+		[]int{0, 3, 2, 5},
+		1,
+		positional,
+		3,
+	},
+	{
+		[]int{0, 3, 2, 5},
+		1,
+		immediate,
+		1,
+	},
+	{
+		[]int{0, 3, 4, 5, 6},
+		2,
+		positional,
+		4,
+	},
+	{
+		[]int{0, 3, 4, 5, 6},
+		2,
+		immediate,
+		2,
+	},
+}
+
+func TestFetchValue(t *testing.T) {
+	for _, testData := range fetchValues {
+		program, err := NewIntCodeProgram(testData.instructionText)
+		if err != nil {
+			t.Errorf("NewIntCodeProgram(%v) error %v", testData.instructionText, err)
+		}
+		got, err := program.fetchValue(testData.paramValue, testData.paramMode)
+		if err != nil {
+
+		}
+		if got != testData.expectedValue {
+			t.Errorf("NewIntCodeProgram(%v).fetchValue(%d, %d) = %d, not %d",
+				testData.instructionText,
+				testData.paramValue,
+				testData.paramMode,
+				got,
+				testData.expectedValue,
+			)
+		}
 	}
 }

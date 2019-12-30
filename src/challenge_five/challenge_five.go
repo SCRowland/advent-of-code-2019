@@ -1,55 +1,40 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	scanner := bufio.NewScanner(os.Stdin)
-
 	fmt.Printf("Running Intcode")
+	if len(os.Args) < 2 {
+		fmt.Printf("\nPlease supply a program to run\n\n")
+		return
+	}
+	fileName := os.Args[1]
 
 	convertedIntInstructions := []int{}
 
-	for scanner.Scan() {
-		line := scanner.Text()
-		rawInstructions := strings.Split(line, ",")
+	data, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		fmt.Printf("err %s", err)
+	}
+	rawInstructions := strings.Split(string(data), ",")
 
-		for _, instruction := range rawInstructions {
-			instructionCode, err := strconv.Atoi(instruction)
-			if err != nil {
-				fmt.Printf("err %s", err)
-				continue
-			}
-			convertedIntInstructions = append(convertedIntInstructions, instructionCode)
+	for _, instruction := range rawInstructions {
+		instructionCode, err := strconv.Atoi(instruction)
+		if err != nil {
+			fmt.Printf("err %s", err)
+			return
 		}
-
-		for noun := 0; noun < 100; noun++ {
-			for verb := 0; verb < 100; verb++ {
-				rawProgram := make([]int, len(convertedIntInstructions))
-				copy(rawProgram, convertedIntInstructions)
-				program, err := NewIntCodeProgram(rawProgram)
-				if err != nil {
-					fmt.Printf("error creating program %s", err)
-				}
-
-				program.SetInitialError(noun, verb)
-				program.Execute()
-				finalState := program.rawInstructions[0]
-				// fmt.Printf("Final State [%d] [%d] %v\n", i, j, finalState)
-				if noun == 12 && verb == 2 {
-					fmt.Printf("Final State noun=[%d] verb=[%d] answer=[%d] (%v)\n", noun, verb, (100*noun + verb), finalState)
-				}
-
-				if finalState == 19690720 {
-					fmt.Printf("Found It:   noun=[%d] verb=[%d] answer=[%d] (%v)\n", noun, verb, (100*noun + verb), finalState)
-					break
-				}
-			}
-		}
+		convertedIntInstructions = append(convertedIntInstructions, instructionCode)
+	}
+	program, err := NewIntCodeProgram(convertedIntInstructions)
+	err = program.Execute()
+	if err != nil {
+		fmt.Printf("There was an error: %v", err)
 	}
 }
