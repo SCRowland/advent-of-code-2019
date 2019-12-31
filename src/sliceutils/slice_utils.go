@@ -1,4 +1,4 @@
-package main
+package sliceutils
 
 // TestIntSliceEq compares two slices of integers for equality
 func TestIntSliceEq(a, b []int) bool {
