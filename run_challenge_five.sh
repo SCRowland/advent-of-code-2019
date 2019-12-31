@@ -3,4 +3,4 @@
 unset GOROOT
 export GOPATH=$(pwd)
 
-go run challenge_five < src/challenge_five/machine_code.data
+go run challenge05 < src/challenge05/machine_code.data
