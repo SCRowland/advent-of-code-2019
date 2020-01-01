@@ -54,13 +54,24 @@ func (g *Graph) AddNode(v string) *Node {
 	return n
 }
 
-// AddEdge adds an edge to the graph
-func (g *Graph) AddEdge(n1, n2 *Node) {
+// AddDirectedEdge adds an edge to the graph
+func (g *Graph) AddDirectedEdge(n1, n2 *Node) {
 	g.lock.Lock()
 	if g.edges == nil {
 		g.edges = make(map[Node][]*Node)
 	}
 	g.edges[*n1] = append(g.edges[*n1], n2)
+	g.lock.Unlock()
+}
+
+// AddUndirectedEdge adds an edge to the graph
+func (g *Graph) AddUndirectedEdge(n1, n2 *Node) {
+	g.lock.Lock()
+	if g.edges == nil {
+		g.edges = make(map[Node][]*Node)
+	}
+	g.edges[*n1] = append(g.edges[*n1], n2)
+	g.edges[*n2] = append(g.edges[*n2], n1)
 	g.lock.Unlock()
 }
 
@@ -90,6 +101,36 @@ func (g *Graph) CountPathSteps() int {
 	}
 
 	return stepCount
+}
+
+// MinimumDistance finds the shortest path
+func (g *Graph) MinimumDistance(start, finish string) int {
+
+	startNode := g.FindNode(Item(start))
+	var nextLevelNodes []*Node = g.edges[*startNode]
+	var visitedNodes = make(map[*Node]bool)
+
+	// this is perhaps a weird algorithm. I basically separate the
+	// graph into levels and return the level I find the target in!
+	// There is bound to be a better way!
+	for level := 1; len(nextLevelNodes) > 0; level++ {
+		var nextNextLevelNodes []*Node = nil
+		for _, node := range nextLevelNodes {
+			if string(node.value) == finish {
+				return level
+			}
+			visitedNodes[node] = true
+			for _, child := range g.edges[*node] {
+				if visitedNodes[child] {
+					continue
+				}
+				nextNextLevelNodes = append(nextNextLevelNodes, child)
+			}
+		}
+		nextLevelNodes = nextNextLevelNodes
+	}
+
+	return -1
 }
 
 // String Renders the Graph

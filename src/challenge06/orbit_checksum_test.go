@@ -54,3 +54,26 @@ func TestDirectOrbits(t *testing.T) {
 		}
 	}
 }
+
+var orbitalTransferMaps = []struct {
+	orbitMap  string
+	transfers int
+}{
+	{
+		exampleOrbitalTransferMap,
+		exampleOrbitalTransferDistance,
+	},
+	{
+		puzzleInput,
+		313,
+	},
+}
+
+func TestOrbitalTransfer(t *testing.T) {
+	for _, testItem := range orbitalTransferMaps {
+		got := MinimumOrbitalTransferCount(testItem.orbitMap)
+		if got != testItem.transfers {
+			t.Errorf("MinimumOrbitalTransferCount() = %d not %d", got, testItem.transfers)
+		}
+	}
+}
