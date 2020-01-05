@@ -6,8 +6,6 @@ var sampleInput = "123456789012"
 var sampleInputWidth = 3
 var sampleInputHeight = 2
 var sampleInputLayers = []string{
-	"123",
-	"456",
-	"789",
-	"012",
+	"123456",
+	"789012",
 }
