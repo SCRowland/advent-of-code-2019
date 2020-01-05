@@ -86,9 +86,17 @@ func calculateThrust(programText string, phases [5]int, seedInput int, feedbackM
 	}(inputChannels[0], seedInput, &seedWG)
 	seedWG.Wait()
 
-	var finalAnswers = <-outputChannels[4]
+	if feedbackMode {
+		var finalAnswer = 0
+		for i := range finalChannels[4] {
+			finalAnswer = i
+		}
+		return finalAnswer, nil
 
-	return finalAnswers, nil
+	}
+
+	var finalAnswer = <-outputChannels[4]
+	return finalAnswer, nil
 }
 
 func calculateMaximumThrust(programText string, feedbackMode bool) (int, error) {
