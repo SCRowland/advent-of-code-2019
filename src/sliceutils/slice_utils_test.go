@@ -3,12 +3,12 @@ package sliceutils
 import "testing"
 
 var equalSlices = []struct {
-	l []int
-	r []int
+	l []int64
+	r []int64
 }{
-	{[]int{12, 0, 0, 0, 99}, []int{12, 0, 0, 0, 99}},
-	{[]int{12}, []int{12}},
-	{[]int{}, []int{}},
+	{[]int64{12, 0, 0, 0, 99}, []int64{12, 0, 0, 0, 99}},
+	{[]int64{12}, []int64{12}},
+	{[]int64{}, []int64{}},
 	{nil, nil},
 }
 
@@ -22,13 +22,13 @@ func TestTestEqTrue(t *testing.T) {
 }
 
 var nonEqualSlices = []struct {
-	l []int
-	r []int
+	l []int64
+	r []int64
 }{
-	{[]int{12, 0, 0, 0, 99}, []int{4, 0, 0, 0, 99}},
-	{[]int{12, 0, 0, 0, 99}, []int{4, 0}},
-	{nil, []int{12}},
-	{[]int{12}, nil},
+	{[]int64{12, 0, 0, 0, 99}, []int64{4, 0, 0, 0, 99}},
+	{[]int64{12, 0, 0, 0, 99}, []int64{4, 0}},
+	{nil, []int64{12}},
+	{[]int64{12}, nil},
 }
 
 func TestTestEqFalse(t *testing.T) {

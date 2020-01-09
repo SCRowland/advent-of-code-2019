@@ -1,7 +1,7 @@
 package sliceutils
 
 // TestIntSliceEq compares two slices of integers for equality
-func TestIntSliceEq(a, b []int) bool {
+func TestIntSliceEq(a, b []int64) bool {
 
 	// If one is nil, the other must also be nil.
 	if (a == nil) != (b == nil) {

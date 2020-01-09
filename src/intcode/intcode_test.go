@@ -6,7 +6,7 @@ import (
 )
 
 func TestIterateInstructions(t *testing.T) {
-	instructions := []int{1, 2, 3, 4}
+	instructions := []int64{1, 2, 3, 4}
 	got := NewIntCodeProgram(instructions, nil, nil, nil)
 
 	if got.programCounter != 0 {
@@ -23,7 +23,7 @@ func TestIterateInstructions(t *testing.T) {
 }
 
 func TestNoHaltInstruction(t *testing.T) {
-	instructions := []int{1, 2, 3, 4, 13}
+	instructions := []int64{1, 2, 3, 4, 13}
 	program := NewIntCodeProgram(instructions, nil, nil, nil)
 
 	_, err := program.Execute()
@@ -33,7 +33,7 @@ func TestNoHaltInstruction(t *testing.T) {
 }
 
 func TestJumpIfTrueTrue(t *testing.T) {
-	instructions := []int{1105, 3, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
+	instructions := []int64{1105, 3, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
 	program := NewIntCodeProgram(instructions, nil, nil, nil)
 
 	_, err := program.Execute()
@@ -47,7 +47,7 @@ func TestJumpIfTrueTrue(t *testing.T) {
 }
 
 func TestJumpIfTrueFalse(t *testing.T) {
-	instructions := []int{1105, 0, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
+	instructions := []int64{1105, 0, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
 	program := NewIntCodeProgram(instructions, nil, nil, nil)
 
 	_, err := program.Execute()
@@ -61,7 +61,7 @@ func TestJumpIfTrueFalse(t *testing.T) {
 }
 
 func TestJumpIfFalseTrue(t *testing.T) {
-	instructions := []int{1106, 0, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
+	instructions := []int64{1106, 0, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
 	program := NewIntCodeProgram(instructions, nil, nil, nil)
 
 	_, err := program.Execute()
@@ -75,7 +75,7 @@ func TestJumpIfFalseTrue(t *testing.T) {
 }
 
 func TestJumpIfFalseFalse(t *testing.T) {
-	instructions := []int{1106, 1, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
+	instructions := []int64{1106, 1, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
 	program := NewIntCodeProgram(instructions, nil, nil, nil)
 
 	_, err := program.Execute()
@@ -89,7 +89,7 @@ func TestJumpIfFalseFalse(t *testing.T) {
 }
 
 func TestEqualsTrue(t *testing.T) {
-	instructions := []int{1108, 73, 73, 0, 99}
+	instructions := []int64{1108, 73, 73, 0, 99}
 	program := NewIntCodeProgram(instructions, nil, nil, nil)
 
 	_, err := program.Execute()
@@ -103,7 +103,7 @@ func TestEqualsTrue(t *testing.T) {
 }
 
 func TestEqualsFalse(t *testing.T) {
-	instructions := []int{1108, 73, -73, 0, 99}
+	instructions := []int64{1108, 73, -73, 0, 99}
 	program := NewIntCodeProgram(instructions, nil, nil, nil)
 
 	_, err := program.Execute()
@@ -121,7 +121,7 @@ func TestJumpIfFalse(t *testing.T) {
 }
 
 func TestLessThanTrue(t *testing.T) {
-	instructions := []int{1107, 2, 3, 0, 99}
+	instructions := []int64{1107, 2, 3, 0, 99}
 	program := NewIntCodeProgram(instructions, nil, nil, nil)
 
 	_, err := program.Execute()
@@ -135,7 +135,7 @@ func TestLessThanTrue(t *testing.T) {
 }
 
 func TestLessThanFalse(t *testing.T) {
-	instructions := []int{1107, 3, 2, 0, 99}
+	instructions := []int64{1107, 3, 2, 0, 99}
 	program := NewIntCodeProgram(instructions, nil, nil, nil)
 
 	_, err := program.Execute()
@@ -153,7 +153,7 @@ func TestEquals(t *testing.T) {
 }
 
 func TestExectuteNext(t *testing.T) {
-	instructions := []int{
+	instructions := []int64{
 		1, 0, 0, 0,
 		2, 0, 0, 0,
 		1, 0, 0, 0,
@@ -163,23 +163,23 @@ func TestExectuteNext(t *testing.T) {
 	got := NewIntCodeProgram(instructions, nil, nil, nil)
 	got.Execute()
 
-	if got.programCounter != 12 {
+	if got.programCounter != int64(12) {
 		t.Errorf("NewIntCodeProgram(%v).programCounter = %d, should be 4", instructions, got.programCounter)
 	}
 }
 
 var haltPrograms = []struct {
-	programText            []int
-	expectedProgramCounter int
+	programText            []int64
+	expectedProgramCounter int64
 }{
-	{[]int{
+	{[]int64{
 		1, 0, 0, 0,
 		2, 0, 0, 0,
 		1, 0, 0, 0,
 		99, 0, 0, 0,
 		1, 0, 0, 0,
 	}, 12},
-	{[]int{
+	{[]int64{
 		1, 0, 0, 0,
 		2, 0, 0, 0,
 		1, 0, 0, 0,
@@ -188,7 +188,7 @@ var haltPrograms = []struct {
 		2, 0, 0, 0,
 		99,
 	}, 24},
-	{[]int{
+	{[]int64{
 		99,
 	}, 0},
 }
@@ -205,15 +205,15 @@ func TestExecuteHalt(t *testing.T) {
 }
 
 var badOpcodePrograms = []struct {
-	programText []int
+	programText []int64
 }{
-	{[]int{
+	{[]int64{
 		11, 0, 0, 0,
 	}},
-	{[]int{
+	{[]int64{
 		-1, 0, 0, 0,
 	}},
-	{[]int{
+	{[]int64{
 		98, 0, 0, 0,
 	}},
 }
@@ -229,15 +229,15 @@ func TestBadOpcode(t *testing.T) {
 }
 
 var addOpcodePrograms = []struct {
-	programText        []int
-	expectedFinalState []int
+	programText        []int64
+	expectedFinalState []int64
 }{
 	{
-		[]int{
+		[]int64{
 			1, 5, 6, 7,
 			99, 25, 14, 0,
 		},
-		[]int{
+		[]int64{
 			1, 5, 6, 7,
 			99, 25, 14, 39,
 		},
@@ -259,15 +259,15 @@ func TestAdditionOpcode(t *testing.T) {
 }
 
 var multiplyOpcodePrograms = []struct {
-	programText        []int
-	expectedFinalState []int
+	programText        []int64
+	expectedFinalState []int64
 }{
 	{
-		[]int{
+		[]int64{
 			2, 5, 6, 7,
 			99, 25, 14, 0,
 		},
-		[]int{
+		[]int64{
 			2, 5, 6, 7,
 			99, 25, 14, 350,
 		},
@@ -288,14 +288,14 @@ func TestMultiplyOpcode(t *testing.T) {
 	}
 }
 
-var echoProgram = []int{3, 0, 4, 0, 99}
+var echoProgram = []int64{3, 0, 4, 0, 99}
 
 func TestInputAndOutputOperations(t *testing.T) {
-	expectedValue := 67
+	expectedValue := int64(67)
 
-	input := make(chan int)
-	output := make(chan int)
-	final := make(chan int)
+	input := make(chan int64)
+	output := make(chan int64)
+	final := make(chan int64)
 
 	program := NewIntCodeProgram(echoProgram, input, output, final)
 
@@ -338,16 +338,16 @@ func TestFinalOperation(t *testing.T) {
 }
 
 var complexPrograms = []struct {
-	programText        []int
-	expectedFinalState []int
+	programText        []int64
+	expectedFinalState []int64
 }{
 	{
-		[]int{
+		[]int64{
 			1, 9, 10, 11,
 			1, 11, 10, 9,
 			99, 3, 4, 0,
 		},
-		[]int{
+		[]int64{
 			1, 9, 10, 11,
 			1, 11, 10, 9,
 			99, 11, 4, 7,
@@ -369,7 +369,7 @@ func TestComplexProgram(t *testing.T) {
 	}
 }
 
-var inputProgram = []int{
+var inputProgram = []int64{
 	1, 0, 0, 3,
 	1, 1, 2, 3,
 	1, 3, 4, 3,
@@ -411,11 +411,11 @@ var inputProgram = []int{
 }
 
 var instructions = []struct {
-	instruction        int
-	expectedOpcode     int
-	expectedModeParam1 int
-	expectedModeParam2 int
-	expectedModeParam3 int
+	instruction        int64
+	expectedOpcode     int64
+	expectedModeParam1 int64
+	expectedModeParam2 int64
+	expectedModeParam3 int64
 }{
 	{
 		1002,
@@ -482,31 +482,31 @@ func TestInstructionParsing(t *testing.T) {
 }
 
 var fetchValues = []struct {
-	instructionText []int
-	paramValue      int
-	paramMode       int
-	expectedValue   int
+	instructionText []int64
+	paramValue      int64
+	paramMode       int64
+	expectedValue   int64
 }{
 	{
-		[]int{0, 3, 2, 5},
+		[]int64{0, 3, 2, 5},
 		1,
 		positional,
 		3,
 	},
 	{
-		[]int{0, 3, 2, 5},
+		[]int64{0, 3, 2, 5},
 		1,
 		immediate,
 		1,
 	},
 	{
-		[]int{0, 3, 4, 5, 6},
+		[]int64{0, 3, 4, 5, 6},
 		2,
 		positional,
 		4,
 	},
 	{
-		[]int{0, 3, 4, 5, 6},
+		[]int64{0, 3, 4, 5, 6},
 		2,
 		immediate,
 		2,
@@ -533,15 +533,15 @@ func TestFetchValue(t *testing.T) {
 }
 
 func TestFetchBadValue(t *testing.T) {
-	program := NewIntCodeProgram([]int{}, nil, nil, nil)
-	_, err := program.fetchValue(11, 3)
+	program := NewIntCodeProgram([]int64{}, nil, nil, nil)
+	_, err := program.fetchValue(int64(11), int64(3))
 	if err == nil {
 		t.Errorf("bad parameter mode ignored")
 	}
 }
 
 func TestGetResult(t *testing.T) {
-	var programIntructions = []int{1, 2, 3, 4}
+	var programIntructions = []int64{1, 2, 3, 4}
 	program := NewIntCodeProgram(programIntructions, nil, nil, nil)
 	got := program.GetResult()
 	if got != 1 {
@@ -550,7 +550,7 @@ func TestGetResult(t *testing.T) {
 }
 
 func TestSetInitialError(t *testing.T) {
-	var programIntructions = []int{1, 2, 3, 4}
+	var programIntructions = []int64{1, 2, 3, 4}
 	program := NewIntCodeProgram(programIntructions, nil, nil, nil)
 	program.SetInitialError(123, 456)
 	if program.rawInstructions[1] != 123 {
@@ -560,4 +560,77 @@ func TestSetInitialError(t *testing.T) {
 	if program.rawInstructions[2] != 456 {
 		t.Errorf("program.rawInstructions[2] = %d not 456", program.rawInstructions[1])
 	}
+}
+
+func TestGetRelativeValue(t *testing.T) {
+	copyProgram := []int64{109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99}
+	output := make(chan int64, len(copyProgram))
+	program := NewIntCodeProgram(copyProgram, nil, output, nil)
+
+	_, err := program.Execute()
+	if err != nil {
+		t.Errorf("NewIntCodeProgram(%v) error: %s", copyProgram, err)
+	}
+
+	var outputProg []int64
+	for i := 0; i < len(copyProgram); i++ {
+		outputProg = append(outputProg, <-output)
+	}
+
+	if len(outputProg) != len(copyProgram) {
+		t.Errorf("Prog len differed %d != %d, %v", len(outputProg), len(copyProgram), outputProg)
+	}
+
+	for i := range outputProg {
+		if outputProg[i] != copyProgram[i] {
+			t.Errorf("OutputProg %v mistach at %d from copyProg %v", outputProg, i, copyProgram)
+		}
+	}
+
+}
+
+func TestLongNumbers(t *testing.T) {
+	longNumProg := []int64{1102, 34915192, 34915192, 7, 4, 7, 99, 0}
+	expected := int64(1219070632396864)
+	output := make(chan int64, 1)
+
+	program := NewIntCodeProgram(longNumProg, nil, output, nil)
+
+	result, err := program.Execute()
+	if err != nil {
+		t.Errorf("NewIntCodeProgram(%v) error: %s", longNumProg, err)
+	}
+
+	if result != expected {
+		t.Errorf("NewIntCodeProgram(%v) = %d not %d", longNumProg, result, expected)
+	}
+
+	outputVal := <-output
+	if outputVal != expected {
+		t.Errorf("NewIntCodeProgram(%v) output = %d not %d", longNumProg, outputVal, expected)
+	}
+
+}
+
+func TestExampleThree(t *testing.T) {
+	longNumProg := []int64{104, 1125899906842624, 99}
+	expected := int64(1125899906842624)
+	output := make(chan int64, 1)
+
+	program := NewIntCodeProgram(longNumProg, nil, output, nil)
+
+	result, err := program.Execute()
+	if err != nil {
+		t.Errorf("NewIntCodeProgram(%v) error: %s", longNumProg, err)
+	}
+
+	if result != expected {
+		t.Errorf("NewIntCodeProgram(%v) = %d not %d", longNumProg, result, expected)
+	}
+
+	outputVal := <-output
+	if outputVal != expected {
+		t.Errorf("NewIntCodeProgram(%v) output = %d not %d", longNumProg, outputVal, expected)
+	}
+
 }
