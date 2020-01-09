@@ -30,7 +30,7 @@ func TestCalculateMaximumThrust(t *testing.T) {
 
 func TestSolveProblem(t *testing.T) {
 	got, err := calculateMaximumThrust(challengeProgram, false)
-	expected := 17440
+	expected := int64(17440)
 	if err != nil {
 		t.Errorf("calculateMaximumThrust(<>) error %v", err)
 	}
@@ -53,7 +53,7 @@ func TestCalculateThrustFeedback(t *testing.T) {
 
 func TestSolveProblemPartTwo(t *testing.T) {
 	got, err := calculateMaximumThrust(challengeProgram, true)
-	expected := 27561242
+	expected := int64(27561242)
 	if err != nil {
 		t.Errorf("calculateMaximumThrust(<>) error %v", err)
 	}

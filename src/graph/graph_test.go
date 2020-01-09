@@ -12,12 +12,12 @@ func fillGraph(g *Graph) {
 	nE := g.AddOrFindNode("E")
 	nF := g.AddOrFindNode("F")
 
-	g.AddEdge(nA, nB)
-	g.AddEdge(nA, nC)
-	g.AddEdge(nB, nE)
-	g.AddEdge(nC, nE)
-	g.AddEdge(nE, nF)
-	g.AddEdge(nD, nA)
+	g.AddUndirectedEdge(nA, nB)
+	g.AddUndirectedEdge(nA, nC)
+	g.AddUndirectedEdge(nB, nE)
+	g.AddUndirectedEdge(nC, nE)
+	g.AddUndirectedEdge(nE, nF)
+	g.AddUndirectedEdge(nD, nA)
 }
 
 func TestAdd(t *testing.T) {

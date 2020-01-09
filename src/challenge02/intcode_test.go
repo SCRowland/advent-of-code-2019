@@ -16,7 +16,7 @@ func TestIterateInstructions(t *testing.T) {
 		t.Errorf("NewIntCodeProgram(%v).programCounter = %d, should be 0", instructions, got)
 	}
 
-	if !sliceutils.TestIntSliceEq(got.rawInstructions, instructions) {
+	if !sliceutils.TestIntSliceEq32(got.rawInstructions, instructions) {
 		t.Errorf("NewIntCodeProgram(%v).rawInstructions = %v, should be %v", instructions, got.rawInstructions, instructions)
 	}
 
@@ -135,7 +135,7 @@ func TestAdditionOpcode(t *testing.T) {
 			t.Errorf("NewIntCodeProgram(%v) error: %s", tt.programText, err)
 		}
 
-		if !sliceutils.TestIntSliceEq(got.rawInstructions, tt.expectedFinalState) {
+		if !sliceutils.TestIntSliceEq32(got.rawInstructions, tt.expectedFinalState) {
 			t.Errorf("NewIntCodeProgram(%v) ended %v, not %v", tt.programText, got.rawInstructions, tt.expectedFinalState)
 		}
 	}
@@ -166,7 +166,7 @@ func TestMultiplyOpcode(t *testing.T) {
 			t.Errorf("NewIntCodeProgram(%v) error: %s", tt.programText, err)
 		}
 
-		if !sliceutils.TestIntSliceEq(got.rawInstructions, tt.expectedFinalState) {
+		if !sliceutils.TestIntSliceEq32(got.rawInstructions, tt.expectedFinalState) {
 			t.Errorf("NewIntCodeProgram(%v) ended %v, not %v", tt.programText, got.rawInstructions, tt.expectedFinalState)
 		}
 	}
@@ -199,7 +199,7 @@ func TestComplexProgram(t *testing.T) {
 			t.Errorf("NewIntCodeProgram(%v) error: %s", tt.programText, err)
 		}
 
-		if !sliceutils.TestIntSliceEq(got.rawInstructions, tt.expectedFinalState) {
+		if !sliceutils.TestIntSliceEq32(got.rawInstructions, tt.expectedFinalState) {
 			t.Errorf("NewIntCodeProgram(%v) ended %v, not %v", tt.programText, got.rawInstructions, tt.expectedFinalState)
 		}
 	}

@@ -1,13 +1,13 @@
 package sliceutils
 
 // Permutations gets all permutations of a slice of ints
-func Permutations(arr []int) [][]int {
-	var helper func([]int, int)
-	res := [][]int{}
+func Permutations(arr []int64) [][]int64 {
+	var helper func([]int64, int)
+	res := [][]int64{}
 
-	helper = func(arr []int, n int) {
+	helper = func(arr []int64, n int) {
 		if n == 1 {
-			tmp := make([]int, len(arr))
+			tmp := make([]int64, len(arr))
 			copy(tmp, arr)
 			res = append(res, tmp)
 		} else {

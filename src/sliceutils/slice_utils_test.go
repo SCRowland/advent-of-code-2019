@@ -2,7 +2,7 @@ package sliceutils
 
 import "testing"
 
-var equalSlices = []struct {
+var equalSlices64 = []struct {
 	l []int64
 	r []int64
 }{
@@ -12,16 +12,16 @@ var equalSlices = []struct {
 	{nil, nil},
 }
 
-func TestTestEqTrue(t *testing.T) {
-	for _, tt := range equalSlices {
-		got := TestIntSliceEq(tt.l, tt.r)
+func TestTestEqTrue64(t *testing.T) {
+	for _, tt := range equalSlices64 {
+		got := TestIntSliceEq64(tt.l, tt.r)
 		if got != true {
 			t.Errorf("testIntSliceEq(%+v, %+v) = %t, want %t", tt.l, tt.r, got, false)
 		}
 	}
 }
 
-var nonEqualSlices = []struct {
+var nonEqualSlices64 = []struct {
 	l []int64
 	r []int64
 }{
@@ -31,9 +31,47 @@ var nonEqualSlices = []struct {
 	{[]int64{12}, nil},
 }
 
-func TestTestEqFalse(t *testing.T) {
-	for _, tt := range nonEqualSlices {
-		got := TestIntSliceEq(tt.l, tt.r)
+func TestTestEqFalse64(t *testing.T) {
+	for _, tt := range nonEqualSlices64 {
+		got := TestIntSliceEq64(tt.l, tt.r)
+		if got != false {
+			t.Errorf("testIntSliceEq(%+v, %+v) = %t, want %t", tt.l, tt.r, got, true)
+		}
+	}
+}
+
+var equalSlices32 = []struct {
+	l []int
+	r []int
+}{
+	{[]int{12, 0, 0, 0, 99}, []int{12, 0, 0, 0, 99}},
+	{[]int{12}, []int{12}},
+	{[]int{}, []int{}},
+	{nil, nil},
+}
+
+func TestTestEqTrue32(t *testing.T) {
+	for _, tt := range equalSlices32 {
+		got := TestIntSliceEq32(tt.l, tt.r)
+		if got != true {
+			t.Errorf("testIntSliceEq(%+v, %+v) = %t, want %t", tt.l, tt.r, got, false)
+		}
+	}
+}
+
+var nonEqualSlices32 = []struct {
+	l []int
+	r []int
+}{
+	{[]int{12, 0, 0, 0, 99}, []int{4, 0, 0, 0, 99}},
+	{[]int{12, 0, 0, 0, 99}, []int{4, 0}},
+	{nil, []int{12}},
+	{[]int{12}, nil},
+}
+
+func TestTestEqFalse32(t *testing.T) {
+	for _, tt := range nonEqualSlices32 {
+		got := TestIntSliceEq32(tt.l, tt.r)
 		if got != false {
 			t.Errorf("testIntSliceEq(%+v, %+v) = %t, want %t", tt.l, tt.r, got, true)
 		}
