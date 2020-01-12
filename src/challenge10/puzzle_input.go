@@ -1,5 +1,97 @@
 package challenge10
 
+var example1Map = `.#..#
+.....
+#####
+....#
+...##`
+var example1VisibilityCounts = [][]int{
+	[]int{0, 7, 0, 0, 7},
+	[]int{0, 0, 0, 0, 0},
+	[]int{6, 7, 7, 7, 5},
+	[]int{0, 0, 0, 0, 7},
+	[]int{0, 0, 0, 8, 7},
+}
+var example1X = 3
+var example1Y = 4
+var example1Width = 5
+var example1Height = 5
+var example1DetecableAsteroids = 8
+
+var example2Map = `......#.#.
+#..#.#....
+..#######.
+.#.#.###..
+.#..#.....
+..#....#.#
+#..#....#.
+.##.#..###
+##...#..#.
+.#....####`
+var example2X = 5
+var example2Y = 8
+var example2Width = 10
+var example2Height = 10
+var example2DetecableAsteroids = 33
+
+var example3Map = `#.#...#.#.
+.###....#.
+.#....#...
+##.#.#.#.#
+....#.#.#.
+.##..###.#
+..#...##..
+..##....##
+......#...
+.####.###.`
+var example3X = 1
+var example3Y = 2
+var example3Width = 10
+var example3Height = 10
+var example3DetecableAsteroids = 35
+
+var example4Map = `.#..#..###
+####.###.#
+....###.#.
+..###.##.#
+##.##.#.#.
+....###..#
+..#.#..#.#
+#..#.#.###
+.##...##.#
+.....#.#..`
+var example4X = 6
+var example4Y = 3
+var example4Width = 10
+var example4Height = 10
+var example4DetecableAsteroids = 41
+
+var example5Map = `.#..##.###...#######
+##.############..##.
+.#.######.########.#
+.###.#######.####.#.
+#####.##.#.##.###.##
+..#####..#.#########
+####################
+#.####....###.#.#.##
+##.#################
+#####.##.###..####..
+..######..##.#######
+####.##.####...##..#
+.#####..#.######.###
+##...#.##########...
+#.##########.#######
+.####.#.###.###.#.##
+....##.##.###..#####
+.#.#.###########.###
+#.#.#.#####.####.###
+###.##.####.##.#..##`
+var example5X = 11
+var example5Y = 13
+var example5Width = 20
+var example5Height = 20
+var example5DetecableAsteroids = 210
+
 var challenge10Input = `...###.#########.####
 .######.###.###.##...
 ####.########.#####.#
