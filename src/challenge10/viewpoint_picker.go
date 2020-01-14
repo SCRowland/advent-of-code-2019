@@ -119,7 +119,7 @@ func (aMap *AsteroidMap) getLinesOfAsteroids(from *Asteroid) *map[float32][]Poin
 }
 
 func (aMap *AsteroidMap) getAsteroidDestructionOrder(from *Asteroid) []Asteroid {
-	asteroidOrder := []Asteroid{}
+	asteroidsInDestructionOrder := []Asteroid{}
 
 	linesOfAsteroids := aMap.getLinesOfAsteroids(from)
 
@@ -131,14 +131,12 @@ func (aMap *AsteroidMap) getAsteroidDestructionOrder(from *Asteroid) []Asteroid 
 	sort.Float64s(angles)
 
 	// go round the angles until all asteroids are consumed
-	// consumedAsteroids := 0
-	// for consumedAsteroids <= 201 {
-	for loops := 0; loops < 500; loops++ {
+	nAsteroidsToFind := len(aMap.asteroids) - 1
+	for len(asteroidsInDestructionOrder) < nAsteroidsToFind {
 		for i := 0; i < len(angles); i++ {
 			asteroids := (*linesOfAsteroids)[float32(angles[i])]
 			if len(asteroids) > 0 {
-				//consumedAsteroids++
-				asteroidOrder = append(asteroidOrder, Asteroid(asteroids[0]))
+				asteroidsInDestructionOrder = append(asteroidsInDestructionOrder, Asteroid(asteroids[0]))
 				if len(asteroids) > 1 {
 					(*linesOfAsteroids)[float32(angles[i])] = asteroids[1:]
 				} else {
@@ -147,9 +145,8 @@ func (aMap *AsteroidMap) getAsteroidDestructionOrder(from *Asteroid) []Asteroid 
 			}
 		}
 	}
-	//}
 
-	return asteroidOrder
+	return asteroidsInDestructionOrder
 }
 
 // GetVisibilityCount gets an array of ints showing visiblity counts from each location
