@@ -151,9 +151,92 @@ func TestPuzzleInput(t *testing.T) {
 	}
 }
 
-/* PART TWO
+func TestPartTwoExample1(t *testing.T) {
+	puzzleHeight := len(strings.Split(partTwoExample1.baseMap, "\n"))
+	puzzleWidth := len(strings.Split(partTwoExample1.baseMap, "\n")[0])
 
-   sort visibility counts into order of their angles
+	var expectedAsteroids = 37
 
-   scan round decrementing counts.
-*/
+	aMap := NewAsteroidMap(partTwoExample1.baseMap, puzzleHeight, puzzleWidth)
+	if len(aMap.asteroids) != expectedAsteroids {
+		PrintMap(aMap)
+		t.Errorf("Map should have %d asteroids, not %d", expectedAsteroids, len(aMap.asteroids))
+	}
+
+	base := Asteroid{8, 3}
+	orderOfDestruction := aMap.getAsteroidDestructionOrder(&base)
+
+	first := Asteroid{8, 1}
+	if orderOfDestruction[0] != first {
+		PrintMap(aMap)
+		t.Errorf("Bad first Asteroid %v, not %v", orderOfDestruction[0], first)
+	}
+
+	second := Asteroid{9, 0}
+	if orderOfDestruction[1] != second {
+		PrintMap(aMap)
+		t.Errorf("Bad second Asteroid %v, not %v", orderOfDestruction[1], second)
+	}
+}
+
+func TestPartTwoExample2(t *testing.T) {
+	puzzleHeight := len(strings.Split(example5Map, "\n"))
+	puzzleWidth := len(strings.Split(example5Map, "\n")[0])
+
+	var expectedAsteroids = 300
+
+	aMap := NewAsteroidMap(example5Map, puzzleHeight, puzzleWidth)
+	if len(aMap.asteroids) != expectedAsteroids {
+		PrintMap(aMap)
+		t.Errorf("Map should have %d asteroids, not %d", expectedAsteroids, len(aMap.asteroids))
+	}
+
+	base := Asteroid{11, 13}
+	orderOfDestruction := aMap.getAsteroidDestructionOrder(&base)
+
+	first := Asteroid{11, 12}
+	if orderOfDestruction[0] != first {
+		PrintMap(aMap)
+		t.Errorf("Bad first Asteroid %v, not %v", orderOfDestruction[0], first)
+	}
+
+	second := Asteroid{12, 1}
+	if orderOfDestruction[1] != second {
+		PrintMap(aMap)
+		t.Errorf("Bad second Asteroid %v, not %v", orderOfDestruction[1], second)
+	}
+
+	if !(len(orderOfDestruction) > 200) {
+		t.Errorf("Should be more than %d elements", len(orderOfDestruction))
+	}
+
+	twohundredth := Asteroid{8, 2}
+	if orderOfDestruction[199] != twohundredth {
+		t.Errorf("Bad 200th Asteroid %v, not %v", orderOfDestruction[199], twohundredth)
+	}
+}
+
+func TestPartTwoMainPuzzle(t *testing.T) {
+	puzzleHeight := len(strings.Split(challenge10Input, "\n"))
+	puzzleWidth := len(strings.Split(challenge10Input, "\n")[0])
+
+	var expectedAsteroids = 327
+
+	aMap := NewAsteroidMap(challenge10Input, puzzleHeight, puzzleWidth)
+	if len(aMap.asteroids) != expectedAsteroids {
+		PrintMap(aMap)
+		t.Errorf("Map should have %d asteroids, not %d", expectedAsteroids, len(aMap.asteroids))
+	}
+
+	base := Asteroid{11, 13}
+	orderOfDestruction := aMap.getAsteroidDestructionOrder(&base)
+
+	if !(len(orderOfDestruction) > 200) {
+		t.Errorf("Should be more than %d elements", len(orderOfDestruction))
+	}
+
+	twohundredth := Asteroid{6, 4}
+	if orderOfDestruction[199] != twohundredth {
+		t.Errorf("Bad 200th Asteroid %v, not %v", orderOfDestruction[199], twohundredth)
+	}
+}

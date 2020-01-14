@@ -2,6 +2,7 @@ package challenge10
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -11,6 +12,7 @@ type Asteroid Point
 const (
 	emptySpace = '.'
 	asteroid   = '#'
+	base       = 'X'
 )
 
 // AsteroidMap keeps a map of the asteroids
@@ -30,7 +32,7 @@ func NewAsteroidMap(asteroidMapStr string, height, width int) *AsteroidMap {
 
 	for y, row := range aMap.rawMapRows {
 		for x := 0; x < width; x++ {
-			if row[x] == asteroid {
+			if row[x] == asteroid || row[x] == base {
 				aMap.asteroids = append(aMap.asteroids, Asteroid{x, y})
 			}
 		}
@@ -76,21 +78,84 @@ func (aMap *AsteroidMap) DebugPrint() {
 	}
 }
 
-// GetVisibilityCount gets an array of ints showing visiblity counts from each location
-func (aMap *AsteroidMap) GetVisibilityCount(a *Asteroid) int {
-	var lineOfSightAngles map[float32]bool = make(map[float32]bool)
+type ByDistance struct {
+	points []Point
+	from   Point
+}
 
-	origin := Point(*a)
+func (a ByDistance) Len() int { return len(a.points) }
+func (a ByDistance) Less(i, j int) bool {
+	return a.from.Distance(&a.points[i]) < a.from.Distance(&a.points[j])
+}
+func (a ByDistance) Swap(i, j int) { a.points[i], a.points[j] = a.points[j], a.points[i] }
+
+func (aMap *AsteroidMap) getLinesOfAsteroids(from *Asteroid) *map[float32][]Point {
+	linesOfAsteroids := make(map[float32][]Point)
+
+	origin := Point(*from)
 
 	for _, ast := range aMap.asteroids {
-		if ast.x == a.x && ast.y == a.y {
+		if ast.x == origin.x && ast.y == origin.y {
 			continue
 		}
 		pointB := Point(ast)
-		rawAngle := origin.Angle(&pointB)
-		lineOfSightAngles[float32(rawAngle)] = true
+		rawAngle := float32(origin.Angle(&pointB))
+		pList := linesOfAsteroids[rawAngle]
+		pList = append(pList, pointB)
+		linesOfAsteroids[rawAngle] = pList
 	}
-	return len(lineOfSightAngles)
+
+	// TODO sort the lists of asteroids
+	for angle, pList := range linesOfAsteroids {
+		pointsByDist := ByDistance{
+			pList,
+			origin,
+		}
+		sort.Sort(ByDistance(pointsByDist))
+		linesOfAsteroids[angle] = pointsByDist.points
+	}
+
+	return &linesOfAsteroids
+}
+
+func (aMap *AsteroidMap) getAsteroidDestructionOrder(from *Asteroid) []Asteroid {
+	asteroidOrder := []Asteroid{}
+
+	linesOfAsteroids := aMap.getLinesOfAsteroids(from)
+
+	var angles []float64
+	for angle := range *linesOfAsteroids {
+		angles = append(angles, float64(angle))
+	}
+
+	sort.Float64s(angles)
+
+	// go round the angles until all asteroids are consumed
+	// consumedAsteroids := 0
+	// for consumedAsteroids <= 201 {
+	for loops := 0; loops < 500; loops++ {
+		for i := 0; i < len(angles); i++ {
+			asteroids := (*linesOfAsteroids)[float32(angles[i])]
+			if len(asteroids) > 0 {
+				//consumedAsteroids++
+				asteroidOrder = append(asteroidOrder, Asteroid(asteroids[0]))
+				if len(asteroids) > 1 {
+					(*linesOfAsteroids)[float32(angles[i])] = asteroids[1:]
+				} else {
+					(*linesOfAsteroids)[float32(angles[i])] = []Point{}
+				}
+			}
+		}
+	}
+	//}
+
+	return asteroidOrder
+}
+
+// GetVisibilityCount gets an array of ints showing visiblity counts from each location
+func (aMap *AsteroidMap) GetVisibilityCount(from *Asteroid) int {
+	var lineOfSightAngles = aMap.getLinesOfAsteroids(from)
+	return len(*lineOfSightAngles)
 }
 
 // GetVisibilityCounts gets an array of ints showing visiblity counts from each location
@@ -112,7 +177,8 @@ func (aMap *AsteroidMap) GetVisibilityCounts() [][]int {
 	return visCounts
 }
 
-// GetViewPoint finds the best view point for a base
+// GetViewPoint finds the best view point for a base,
+// and the number of asteroids you can see from it
 func (aMap *AsteroidMap) GetViewPoint() (Asteroid, int) {
 	visCounts := aMap.GetVisibilityCounts()
 

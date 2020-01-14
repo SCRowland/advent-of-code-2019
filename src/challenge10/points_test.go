@@ -9,23 +9,38 @@ var angleTestData = []struct {
 }{
 	{
 		Point{1, 1},
-		Point{1, 2},
-		90.0,
+		Point{1, 0},
+		0.0,
+	},
+	{
+		Point{1, 1},
+		Point{2, 0},
+		45.0,
 	},
 	{
 		Point{1, 1},
 		Point{2, 1},
-		360.0,
+		90.0,
 	},
 	{
 		Point{1, 1},
-		Point{1, 0},
-		270.0,
+		Point{2, 2},
+		135.0,
+	},
+	{
+		Point{1, 1},
+		Point{1, 2},
+		180.0,
 	},
 	{
 		Point{1, 1},
 		Point{0, 1},
-		180.0,
+		270.0,
+	},
+	{
+		Point{1, 1},
+		Point{0, 0},
+		315.0,
 	},
 }
 
