@@ -28,11 +28,6 @@ func calculateThrust(programText string, phases [5]int64, seedInput int64, feedb
 	var inputChannels [5]chan int64
 	var outputChannels [5]chan int64
 	var finalChannels [5]chan int64
-	for i := 0; i < 5; i++ {
-		inputChannels[i] = make(chan int64)
-		outputChannels[i] = make(chan int64)
-		finalChannels[i] = make(chan int64)
-	}
 
 	for i := 0; i < 5; i++ {
 		convertedIntInstructions := []int64{}
@@ -46,8 +41,11 @@ func calculateThrust(programText string, phases [5]int64, seedInput int64, feedb
 			convertedIntInstructions = append(convertedIntInstructions, instructionCode)
 		}
 
-		program := intcode.NewIntCodeProgram(convertedIntInstructions, inputChannels[i], outputChannels[i], finalChannels[i])
-		amplifiers[i] = &program
+		program := intcode.NewIntCodeProgram(convertedIntInstructions)
+		amplifiers[i] = program
+		inputChannels[i] = program.Input
+		outputChannels[i] = program.Output
+		finalChannels[i] = program.Final
 	}
 
 	// connect all channels

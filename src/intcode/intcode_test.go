@@ -7,7 +7,7 @@ import (
 
 func TestIterateInstructions(t *testing.T) {
 	instructions := []int64{1, 2, 3, 4}
-	got := NewIntCodeProgram(instructions, nil, nil, nil)
+	got := NewIntCodeProgram(instructions)
 
 	if got.programCounter != 0 {
 		t.Errorf("NewIntCodeProgram(%v).programCounter = %d, should be 0", instructions, got)
@@ -24,7 +24,7 @@ func TestIterateInstructions(t *testing.T) {
 
 func TestNoHaltInstruction(t *testing.T) {
 	instructions := []int64{1, 2, 3, 4, 13}
-	program := NewIntCodeProgram(instructions, nil, nil, nil)
+	program := NewIntCodeProgram(instructions)
 
 	_, err := program.Execute()
 	if err == nil {
@@ -34,7 +34,7 @@ func TestNoHaltInstruction(t *testing.T) {
 
 func TestJumpIfTrueTrue(t *testing.T) {
 	instructions := []int64{1105, 3, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
-	program := NewIntCodeProgram(instructions, nil, nil, nil)
+	program := NewIntCodeProgram(instructions)
 
 	_, err := program.Execute()
 	if err != nil {
@@ -48,7 +48,7 @@ func TestJumpIfTrueTrue(t *testing.T) {
 
 func TestJumpIfTrueFalse(t *testing.T) {
 	instructions := []int64{1105, 0, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
-	program := NewIntCodeProgram(instructions, nil, nil, nil)
+	program := NewIntCodeProgram(instructions)
 
 	_, err := program.Execute()
 	if err != nil {
@@ -62,7 +62,7 @@ func TestJumpIfTrueFalse(t *testing.T) {
 
 func TestJumpIfFalseTrue(t *testing.T) {
 	instructions := []int64{1106, 0, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
-	program := NewIntCodeProgram(instructions, nil, nil, nil)
+	program := NewIntCodeProgram(instructions)
 
 	_, err := program.Execute()
 	if err != nil {
@@ -76,7 +76,7 @@ func TestJumpIfFalseTrue(t *testing.T) {
 
 func TestJumpIfFalseFalse(t *testing.T) {
 	instructions := []int64{1106, 1, 11, 99, 3, 99, 3, 2, 3, 2, 3, 99}
-	program := NewIntCodeProgram(instructions, nil, nil, nil)
+	program := NewIntCodeProgram(instructions)
 
 	_, err := program.Execute()
 	if err != nil {
@@ -90,7 +90,7 @@ func TestJumpIfFalseFalse(t *testing.T) {
 
 func TestEqualsTrue(t *testing.T) {
 	instructions := []int64{1108, 73, 73, 0, 99}
-	program := NewIntCodeProgram(instructions, nil, nil, nil)
+	program := NewIntCodeProgram(instructions)
 
 	_, err := program.Execute()
 	if err != nil {
@@ -104,7 +104,7 @@ func TestEqualsTrue(t *testing.T) {
 
 func TestEqualsFalse(t *testing.T) {
 	instructions := []int64{1108, 73, -73, 0, 99}
-	program := NewIntCodeProgram(instructions, nil, nil, nil)
+	program := NewIntCodeProgram(instructions)
 
 	_, err := program.Execute()
 	if err != nil {
@@ -122,7 +122,7 @@ func TestJumpIfFalse(t *testing.T) {
 
 func TestLessThanTrue(t *testing.T) {
 	instructions := []int64{1107, 2, 3, 0, 99}
-	program := NewIntCodeProgram(instructions, nil, nil, nil)
+	program := NewIntCodeProgram(instructions)
 
 	_, err := program.Execute()
 	if err != nil {
@@ -136,7 +136,7 @@ func TestLessThanTrue(t *testing.T) {
 
 func TestLessThanFalse(t *testing.T) {
 	instructions := []int64{1107, 3, 2, 0, 99}
-	program := NewIntCodeProgram(instructions, nil, nil, nil)
+	program := NewIntCodeProgram(instructions)
 
 	_, err := program.Execute()
 	if err != nil {
@@ -160,7 +160,7 @@ func TestExectuteNext(t *testing.T) {
 		99,
 	}
 
-	got := NewIntCodeProgram(instructions, nil, nil, nil)
+	got := NewIntCodeProgram(instructions)
 	got.Execute()
 
 	if got.programCounter != int64(12) {
@@ -195,7 +195,7 @@ var haltPrograms = []struct {
 
 func TestExecuteHalt(t *testing.T) {
 	for _, tt := range haltPrograms {
-		got := NewIntCodeProgram(tt.programText, nil, nil, nil)
+		got := NewIntCodeProgram(tt.programText)
 		got.Execute()
 
 		if got.programCounter != tt.expectedProgramCounter {
@@ -220,7 +220,7 @@ var badOpcodePrograms = []struct {
 
 func TestBadOpcode(t *testing.T) {
 	for _, tt := range badOpcodePrograms {
-		got := NewIntCodeProgram(tt.programText, nil, nil, nil)
+		got := NewIntCodeProgram(tt.programText)
 		_, err := got.Execute()
 		if err == nil {
 			t.Errorf("NewIntCodeProgram(%v) opCode error not thrown", tt.programText)
@@ -246,7 +246,7 @@ var addOpcodePrograms = []struct {
 
 func TestAdditionOpcode(t *testing.T) {
 	for _, tt := range addOpcodePrograms {
-		got := NewIntCodeProgram(tt.programText, nil, nil, nil)
+		got := NewIntCodeProgram(tt.programText)
 		_, err := got.Execute()
 		if err != nil {
 			t.Errorf("NewIntCodeProgram(%v) error: %s", tt.programText, err)
@@ -276,7 +276,7 @@ var multiplyOpcodePrograms = []struct {
 
 func TestMultiplyOpcode(t *testing.T) {
 	for _, tt := range multiplyOpcodePrograms {
-		got := NewIntCodeProgram(tt.programText, nil, nil, nil)
+		got := NewIntCodeProgram(tt.programText)
 		_, err := got.Execute()
 		if err != nil {
 			t.Errorf("NewIntCodeProgram(%v) error: %s", tt.programText, err)
@@ -293,28 +293,24 @@ var echoProgram = []int64{3, 0, 4, 0, 99}
 func TestInputAndOutputOperations(t *testing.T) {
 	expectedValue := int64(67)
 
-	input := make(chan int64)
-	output := make(chan int64)
-	final := make(chan int64)
-
-	program := NewIntCodeProgram(echoProgram, input, output, final)
+	program := NewIntCodeProgram(echoProgram)
 
 	finished := make(chan bool)
 
-	go func(finished chan bool) {
-		var outputValue = <-output
+	go func(finished chan bool, program *Program) {
+		var outputValue = <-program.Output
 		if outputValue != expectedValue {
 			t.Errorf("Output from echo program was %d, not %d", outputValue, expectedValue)
 		}
 
-		var finalValue = <-final
+		var finalValue = <-program.Final
 		if finalValue != expectedValue {
 			t.Errorf("Final output from echo program was %d, not %d", finalValue, expectedValue)
 		}
 		finished <- true
-	}(finished)
+	}(finished, program)
 
-	go func(finished chan bool) {
+	go func(finished chan bool, program *Program) {
 		finalVal, err := program.Execute()
 		if err != nil {
 			t.Errorf("Error executing %v", err)
@@ -322,11 +318,11 @@ func TestInputAndOutputOperations(t *testing.T) {
 		if finalVal != expectedValue {
 			t.Errorf("Execute() got %d not %d", finalVal, expectedValue)
 		}
-	}(finished)
+	}(finished, program)
 
-	go func(finished chan bool) {
-		input <- expectedValue
-	}(finished)
+	go func(finished chan bool, program *Program) {
+		program.Input <- expectedValue
+	}(finished, program)
 
 	<-finished
 }
@@ -357,7 +353,7 @@ var complexPrograms = []struct {
 
 func TestComplexProgram(t *testing.T) {
 	for _, tt := range complexPrograms {
-		got := NewIntCodeProgram(tt.programText, nil, nil, nil)
+		got := NewIntCodeProgram(tt.programText)
 		_, err := got.Execute()
 		if err != nil {
 			t.Errorf("NewIntCodeProgram(%v) error: %s", tt.programText, err)
@@ -515,7 +511,7 @@ var fetchValues = []struct {
 
 func TestFetchValue(t *testing.T) {
 	for _, testData := range fetchValues {
-		program := NewIntCodeProgram(testData.instructionText, nil, nil, nil)
+		program := NewIntCodeProgram(testData.instructionText)
 		got, err := program.fetchValue(testData.paramValue, testData.paramMode)
 		if err != nil {
 			t.Errorf("Error thrown by FetchValue(%v) %v", testData.paramValue, err)
@@ -533,7 +529,7 @@ func TestFetchValue(t *testing.T) {
 }
 
 func TestFetchBadValue(t *testing.T) {
-	program := NewIntCodeProgram([]int64{}, nil, nil, nil)
+	program := NewIntCodeProgram([]int64{})
 	_, err := program.fetchValue(int64(11), int64(3))
 	if err == nil {
 		t.Errorf("bad parameter mode ignored")
@@ -542,7 +538,7 @@ func TestFetchBadValue(t *testing.T) {
 
 func TestGetResult(t *testing.T) {
 	var programIntructions = []int64{1, 2, 3, 4}
-	program := NewIntCodeProgram(programIntructions, nil, nil, nil)
+	program := NewIntCodeProgram(programIntructions)
 	got := program.GetResult()
 	if got != 1 {
 		t.Errorf("NewIntCodeProgram(%v).GetResult = %d, not 1", programIntructions, got)
@@ -551,7 +547,7 @@ func TestGetResult(t *testing.T) {
 
 func TestSetInitialError(t *testing.T) {
 	var programIntructions = []int64{1, 2, 3, 4}
-	program := NewIntCodeProgram(programIntructions, nil, nil, nil)
+	program := NewIntCodeProgram(programIntructions)
 	program.SetInitialError(123, 456)
 	if program.rawInstructions[1] != 123 {
 		t.Errorf("program.rawInstructions[1] = %d not 123", program.rawInstructions[1])
@@ -563,9 +559,16 @@ func TestSetInitialError(t *testing.T) {
 }
 
 func TestGetRelativeValue(t *testing.T) {
-	copyProgram := []int64{109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99}
-	output := make(chan int64, len(copyProgram))
-	program := NewIntCodeProgram(copyProgram, nil, output, nil)
+	copyProgram := []int64{
+		109, 1,
+		204, -1,
+		1001, 100, 1, 100,
+		1008, 100, 16, 101,
+		1006, 101, 0,
+		99,
+	}
+	program := NewIntCodeProgram(copyProgram)
+	//program.Output = make(chan int64, 30)
 
 	_, err := program.Execute()
 	if err != nil {
@@ -574,7 +577,7 @@ func TestGetRelativeValue(t *testing.T) {
 
 	var outputProg []int64
 	for i := 0; i < len(copyProgram); i++ {
-		outputProg = append(outputProg, <-output)
+		outputProg = append(outputProg, <-program.Output)
 	}
 
 	if len(outputProg) != len(copyProgram) {
@@ -592,9 +595,8 @@ func TestGetRelativeValue(t *testing.T) {
 func TestLongNumbers(t *testing.T) {
 	longNumProg := []int64{1102, 34915192, 34915192, 7, 4, 7, 99, 0}
 	expected := int64(1219070632396864)
-	output := make(chan int64, 1)
 
-	program := NewIntCodeProgram(longNumProg, nil, output, nil)
+	program := NewIntCodeProgram(longNumProg)
 
 	result, err := program.Execute()
 	if err != nil {
@@ -605,7 +607,7 @@ func TestLongNumbers(t *testing.T) {
 		t.Errorf("NewIntCodeProgram(%v) = %d not %d", longNumProg, result, expected)
 	}
 
-	outputVal := <-output
+	outputVal := <-program.Output
 	if outputVal != expected {
 		t.Errorf("NewIntCodeProgram(%v) output = %d not %d", longNumProg, outputVal, expected)
 	}
@@ -615,9 +617,8 @@ func TestLongNumbers(t *testing.T) {
 func TestExampleThree(t *testing.T) {
 	longNumProg := []int64{104, 1125899906842624, 99}
 	expected := int64(1125899906842624)
-	output := make(chan int64, 1)
 
-	program := NewIntCodeProgram(longNumProg, nil, output, nil)
+	program := NewIntCodeProgram(longNumProg)
 
 	result, err := program.Execute()
 	if err != nil {
@@ -628,7 +629,7 @@ func TestExampleThree(t *testing.T) {
 		t.Errorf("NewIntCodeProgram(%v) = %d not %d", longNumProg, result, expected)
 	}
 
-	outputVal := <-output
+	outputVal := <-program.Output
 	if outputVal != expected {
 		t.Errorf("NewIntCodeProgram(%v) output = %d not %d", longNumProg, outputVal, expected)
 	}

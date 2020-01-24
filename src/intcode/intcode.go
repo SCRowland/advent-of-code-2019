@@ -9,22 +9,9 @@ type Program struct {
 	programCounter  int64
 	relativeBase    int64
 	rawInstructions []int64
-	input           chan int64
-	output          chan int64
-	final           chan int64
-}
-
-// NewIntCodeProgram is the only way to instantiate a New Int Code program
-func NewIntCodeProgram(instructions []int64, input, output, final chan int64) Program {
-	program := Program{
-		0,
-		0,
-		instructions,
-		input,
-		output,
-		final,
-	}
-	return program
+	Input           chan int64
+	Output          chan int64
+	Final           chan int64
 }
 
 func parseInstruction(instruction int64) (opcode, paramMode1, paramMode2, paramMode3 int64) {
@@ -143,8 +130,8 @@ func (icp *Program) getLocationOrZero(location int64) int64 {
 func (icp *Program) Execute() (int64, error) {
 	var finalOutputVal int64
 
-	if icp.final != nil {
-		defer close(icp.final)
+	if icp.Final != nil {
+		defer close(icp.Final)
 	}
 
 	for icp.programCounter <= int64(len(icp.rawInstructions)) {
@@ -156,8 +143,8 @@ func (icp *Program) Execute() (int64, error) {
 
 		switch opcode {
 		case halt:
-			if icp.final != nil {
-				icp.final <- finalOutputVal
+			if icp.Final != nil {
+				icp.Final <- finalOutputVal
 			}
 			return finalOutputVal, nil
 
@@ -175,13 +162,13 @@ func (icp *Program) Execute() (int64, error) {
 
 		case input:
 			icp.programCounter += 2
-			var inputNumber = <-icp.input
+			var inputNumber = <-icp.Input
 			icp.setValue(positionOne, inputNumber, paramMode1)
 
 		case output:
 			icp.programCounter += 2
 			var val1, _ = icp.fetchValue(positionOne, paramMode1)
-			icp.output <- val1
+			icp.Output <- val1
 			finalOutputVal = val1
 
 		case jumpIfTrue:
@@ -247,4 +234,20 @@ func (icp *Program) GetResult() int64 {
 func (icp *Program) SetInitialError(noun int64, verb int64) {
 	icp.rawInstructions[1] = noun
 	icp.rawInstructions[2] = verb
+}
+
+// NewIntCodeProgram is the only way to instantiate a New Int Code program
+func NewIntCodeProgram(instructions []int64) *Program {
+	input := make(chan int64, 1)
+	output := make(chan int64, 1000)
+	final := make(chan int64, 1)
+
+	return &Program{
+		0,
+		0,
+		instructions,
+		input,
+		output,
+		final,
+	}
 }
