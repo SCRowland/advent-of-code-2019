@@ -8,6 +8,21 @@ import (
 )
 
 func timeToRepeat(input string) uint64 {
+	/*
+		Note, the simulation starts with all velocities at zero.
+
+		To find the period taken to return to that state (one cycle),
+		we need to find the period that each moon is taking to cycle
+		on it's axis. A velocity of Zero indicats it is at one of the
+		two extremes of its motion on that axis.
+
+		Therefore, if we find when all bodies have returned to 0 on
+		an axis, we have measured half a full cycle for that axis.
+
+		Once we have all three cycle periods, we can find the Lowest
+		Common Multiple of them to predict when the system will return
+		back to it's start state.
+	*/
 	moonStrs := strings.Split(input, "\n")
 
 	moons := [4]*challenge12.Moon{
@@ -86,7 +101,7 @@ func timeToRepeat(input string) uint64 {
 		}
 	}
 
-	fmt.Printf("1=%d, 2=%d, 3=%dn", periods[0], periods[1], periods[2])
+	fmt.Printf("1=%d, 2=%d, 3=%d\n", periods[0], periods[1], periods[2])
 	answer := spacemaths.LCM(spacemaths.LCM(periods[0], periods[1]), periods[2])
 
 	return answer
