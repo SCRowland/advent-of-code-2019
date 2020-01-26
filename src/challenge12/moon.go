@@ -8,21 +8,21 @@ import (
 )
 
 type Position struct {
-	x int
-	y int
-	z int
+	X int
+	Y int
+	Z int
 }
 
 type Velocity struct {
-	x int
-	y int
-	z int
+	X int
+	Y int
+	Z int
 }
 
 // Moon is a moon with a three dimensional location
 type Moon struct {
-	position Position
-	velocity Velocity
+	Position Position
+	Velocity Velocity
 }
 
 func findCoord(coord, repr string) int {
@@ -52,50 +52,54 @@ func fromStr(repr string) *Moon {
 	moon := Moon{}
 
 	x, y, z := XYZfromStr(repr)
-	moon.position.x = x
-	moon.position.y = y
-	moon.position.z = z
+	moon.Position.X = x
+	moon.Position.Y = y
+	moon.Position.Z = z
 
 	return &moon
 }
 
 func (m *Moon) toStr() string {
 	return fmt.Sprintf("pos=<x=%d, y=%d, z=%d>, vel=<x=%d, y=%d, z=%d>",
-		m.position.x, m.position.y, m.position.z, m.velocity.x, m.velocity.y, m.velocity.z)
+		m.Position.X, m.Position.Y, m.Position.Z, m.Velocity.X, m.Velocity.Y, m.Velocity.Z)
 }
 
-func (m *Moon) applyVelocity() {
-	m.position.x += m.velocity.x
-	m.position.y += m.velocity.y
-	m.position.z += m.velocity.z
+func (m *Moon) ShortStr() string {
+	return strconv.Itoa(m.Position.X) + strconv.Itoa(m.Position.Y) + strconv.Itoa(m.Position.Z) + strconv.Itoa(m.Velocity.X) + strconv.Itoa(m.Velocity.Y) + strconv.Itoa(m.Velocity.Z)
 }
 
-func (m *Moon) applyGravityToBoth(otherMoon *Moon) {
-	if m.position.x == otherMoon.position.x {
-	} else if m.position.x > otherMoon.position.x {
-		m.velocity.x--
-		otherMoon.velocity.x++
+func (m *Moon) ApplyVelocity() {
+	m.Position.X += m.Velocity.X
+	m.Position.Y += m.Velocity.Y
+	m.Position.Z += m.Velocity.Z
+}
+
+func (m *Moon) ApplyGravityToBoth(otherMoon *Moon) {
+	if m.Position.X == otherMoon.Position.X {
+	} else if m.Position.X > otherMoon.Position.X {
+		m.Velocity.X--
+		otherMoon.Velocity.X++
 	} else {
-		m.velocity.x++
-		otherMoon.velocity.x--
+		m.Velocity.X++
+		otherMoon.Velocity.X--
 	}
 
-	if m.position.y == otherMoon.position.y {
-	} else if m.position.y > otherMoon.position.y {
-		m.velocity.y--
-		otherMoon.velocity.y++
+	if m.Position.Y == otherMoon.Position.Y {
+	} else if m.Position.Y > otherMoon.Position.Y {
+		m.Velocity.Y--
+		otherMoon.Velocity.Y++
 	} else {
-		m.velocity.y++
-		otherMoon.velocity.y--
+		m.Velocity.Y++
+		otherMoon.Velocity.Y--
 	}
 
-	if m.position.z == otherMoon.position.z {
-	} else if m.position.z > otherMoon.position.z {
-		m.velocity.z--
-		otherMoon.velocity.z++
+	if m.Position.Z == otherMoon.Position.Z {
+	} else if m.Position.Z > otherMoon.Position.Z {
+		m.Velocity.Z--
+		otherMoon.Velocity.Z++
 	} else {
-		m.velocity.z++
-		otherMoon.velocity.z--
+		m.Velocity.Z++
+		otherMoon.Velocity.Z--
 	}
 }
 
