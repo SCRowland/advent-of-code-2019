@@ -23,3 +23,36 @@ func TestExamples(t *testing.T) {
 		assert.Equal(t, td.expected, actual, tn)
 	}
 }
+
+func TestOneTrillionOre(t *testing.T) {
+	testData := map[string]struct {
+		input    string
+		expected int64
+	}{
+		"example3": {
+			example3.input,
+			82892753,
+		},
+		"example4": {
+			example4.input,
+			5586022,
+		},
+		"example5": {
+			example5.input,
+			460664,
+		},
+		"puzzleInput": {
+			puzzleInput.input,
+			2074843,
+		},
+	}
+
+	var oneTrillion int64 = 1000000000000
+
+	for tn, td := range testData {
+		rm := parseReactionMap(td.input)
+		actual := maxFuel(rm, oneTrillion)
+
+		assert.Equal(t, td.expected, actual, tn)
+	}
+}

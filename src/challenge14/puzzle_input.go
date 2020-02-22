@@ -2,7 +2,7 @@ package challenge14
 
 type SampleInput struct {
 	input    string
-	expected int
+	expected int64
 }
 
 var example1 = SampleInput{
