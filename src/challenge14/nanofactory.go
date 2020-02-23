@@ -2,13 +2,14 @@ package challenge14
 
 import (
 	"math"
+	"sort"
 	"strconv"
 	"strings"
 )
 
 // Component is a single reagent and amount
 type Component struct {
-	amount  int64
+	amount  int
 	element string
 }
 
@@ -25,13 +26,13 @@ func parseComponent(compStr string) *Component {
 	compStr = strings.TrimSpace(compStr)
 
 	tokens := strings.Split(compStr, " ")
-	i, err := strconv.ParseInt(tokens[0], 10, 64)
+	i, err := strconv.ParseInt(tokens[0], 10, 32)
 	if err != nil {
 		panic(err)
 	}
 
 	component := &Component{
-		amount:  int64(i),
+		amount:  int(i),
 		element: tokens[1],
 	}
 
@@ -58,8 +59,8 @@ func parseReactionMap(input string) ReactionMap {
 	return rm
 }
 
-func calcMinOre(rm ReactionMap, required *Component) int64 {
-	needed := map[string]int64{
+func calcMinOre(rm ReactionMap, required *Component) int {
+	needed := map[string]int{
 		required.element: required.amount,
 	}
 
@@ -73,8 +74,7 @@ func calcMinOre(rm ReactionMap, required *Component) int64 {
 				reaction := rm[elem]
 				unitsWeCanMake := reaction.output.amount
 
-				var multiplier int64 = 1
-
+				multiplier := 1
 				if amountNeeded <= unitsWeCanMake {
 					// you can't partially run a reaction
 					multiplier = 1
@@ -83,7 +83,7 @@ func calcMinOre(rm ReactionMap, required *Component) int64 {
 				if amountNeeded > unitsWeCanMake {
 					// e.g. we need 7, and we can make 2, so we need to make 4 lots (8)
 					fractionalMultiplier := float64(amountNeeded / unitsWeCanMake)
-					multiplier = int64(math.Ceil(fractionalMultiplier))
+					multiplier = int(math.Ceil(fractionalMultiplier))
 				}
 
 				needed[elem] -= unitsWeCanMake * multiplier
@@ -102,14 +102,16 @@ func calcMinOre(rm ReactionMap, required *Component) int64 {
 	return needed["ORE"]
 }
 
-func maxFuel(rm ReactionMap, oreAmount int64) int64 {
-	// binary search the likely answer range
+func maxFuelLibrarySearch(rm ReactionMap, oreAmount int) int {
+	return sort.Search(int(oreAmount), func(i int) bool { return calcMinOre(rm, &Component{i + 1, "FUEL"}) > oreAmount })
+}
 
-	var high int64 = oreAmount
-	var low int64 = 1
+func maxFuelBinarySearch(rm ReactionMap, oreAmount int) int {
+	// binary search the probable answer range
+	high := oreAmount
+	low := 1
 
 	for true {
-
 		midPoint := ((high - low) / 2) + low
 
 		maxOre := calcMinOre(rm, &Component{midPoint, "FUEL"})
@@ -122,7 +124,6 @@ func maxFuel(rm ReactionMap, oreAmount int64) int64 {
 		if maxOre < oreAmount {
 			low = midPoint + 1
 		}
-
 	}
 
 	return 0
